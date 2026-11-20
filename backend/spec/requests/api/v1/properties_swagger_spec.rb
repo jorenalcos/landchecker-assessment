@@ -49,6 +49,48 @@ RSpec.describe "API V1 Properties", type: :request do
       tags "Properties"
       produces "application/json"
 
+      parameter name: :property_type,
+                in: :query,
+                type: :string,
+                required: false,
+                description: "Filter by property type (house, apartment, condo)"
+
+      parameter name: :status,
+                in: :query,
+                type: :string,
+                required: false,
+                description: "Filter by property status (available, sold, rented)"
+
+      parameter name: :min_price,
+                in: :query,
+                type: :number,
+                required: false,
+                description: "Minimum property price"
+
+      parameter name: :max_price,
+                in: :query,
+                type: :number,
+                required: false,
+                description: "Maximum property price"
+
+      parameter name: :search,
+                in: :query,
+                type: :string,
+                required: false,
+                description: "Search by property title or address"
+
+      parameter name: :page,
+                in: :query,
+                type: :integer,
+                required: false,
+                description: "Page number"
+
+      parameter name: :per_page,
+                in: :query,
+                type: :integer,
+                required: false,
+                description: "Number of properties per page (maximum 50)"
+
       response "200", "Properties retrieved successfully" do
         schema type: :object,
                properties: {

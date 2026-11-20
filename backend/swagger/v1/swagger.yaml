@@ -164,6 +164,49 @@ paths:
       summary: List all properties
       tags:
       - Properties
+      parameters:
+      - name: property_type
+        in: query
+        required: false
+        description: Filter by property type (house, apartment, condo)
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        description: Filter by property status (available, sold, rented)
+        schema:
+          type: string
+      - name: min_price
+        in: query
+        required: false
+        description: Minimum property price
+        schema:
+          type: number
+      - name: max_price
+        in: query
+        required: false
+        description: Maximum property price
+        schema:
+          type: number
+      - name: search
+        in: query
+        required: false
+        description: Search by property title or address
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Number of properties per page (maximum 50)
+        schema:
+          type: integer
       responses:
         '200':
           description: Properties retrieved successfully
