@@ -8,11 +8,25 @@ class User < ApplicationRecord
 
   before_validation :normalize_email
 
-  validates :email, presence: true,
-                    uniqueness: { case_sensitive: false }
+  ROLES = %w[user admin].freeze
 
-  validates :password, length: { minimum: 8 },
-                       if: -> { password.present? }
+  validates :email,
+            presence: true,
+            uniqueness: { case_sensitive: false }
+
+  validates :password,
+            length: { minimum: 8 },
+            if: -> { password.present? }
+
+  validates :role, inclusion: { in: ROLES }
+
+  def admin?
+    role == "admin"
+  end
+
+  def regular_user?
+    role == "user"
+  end
 
   private
 

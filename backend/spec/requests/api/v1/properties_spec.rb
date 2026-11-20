@@ -4,8 +4,9 @@ RSpec.describe "API V1 Properties", type: :request do
   let(:password) { "SecurePassword123" }
   let(:user) do
     User.create!(
-      email: "property-owner@example.com",
-      password: password
+      email: "property-test@example.com",
+      password: password,
+      role: "admin"
     )
   end
 

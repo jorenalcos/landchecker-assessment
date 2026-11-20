@@ -7,7 +7,8 @@ RSpec.describe "API V1 Properties Caching", type: :request do
   let(:user) do
     User.create!(
       email: "property-cache@example.com",
-      password: password
+      password: password,
+      role: "admin"
     )
   end
 

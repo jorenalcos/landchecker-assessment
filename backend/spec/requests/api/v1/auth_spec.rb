@@ -26,6 +26,22 @@ RSpec.describe "API V1 Authentication", type: :request do
         run_test!
       end
 
+      response "201", "Registration ignores admin role assignment" do
+        let(:credentials) do
+          {
+            email: "role-test@example.com",
+            password: password,
+            role: "admin"
+          }
+        end
+
+        run_test! do
+          user = User.find_by(email: "role-test@example.com")
+
+          expect(user.role).to eq("user")
+        end
+      end
+
       response "422", "Duplicate email address" do
         before do
           User.create!(email: email, password: password)

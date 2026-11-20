@@ -24,7 +24,8 @@ RSpec.describe "API V1 Properties", type: :request do
   let(:user) do
     User.create!(
       email: "property-owner@example.com",
-      password: "SecurePassword123"
+      password: "SecurePassword123",
+      role: "admin"
     )
   end
 
@@ -90,6 +91,7 @@ RSpec.describe "API V1 Properties", type: :request do
                 type: :integer,
                 required: false,
                 description: "Number of properties per page (maximum 50)"
+
 
       response "200", "Properties retrieved successfully" do
         schema type: :object,

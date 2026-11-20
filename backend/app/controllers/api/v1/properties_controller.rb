@@ -3,6 +3,7 @@ module Api
   module V1
     class PropertiesController < ApplicationController
       before_action :authenticate_user!, only: %i[create update destroy]
+      before_action :authorize_admin!, only: %i[create update destroy]
       before_action :set_property, only: %i[show update destroy]
 
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
