@@ -18,6 +18,7 @@ import {
 import { useProperties } from "../hooks/useProperties";
 import type { Property } from "../types/property";
 import PropertyGrid from "../components/PropertyGrid";
+import AuthActions from "../../auth/components/AuthActions";
 
 const categories = [
   { name: "All properties", icon: House },
@@ -118,13 +119,8 @@ export default function MarketplacePage() {
             <a href="#about" className="hover:text-emerald-700">About</a>
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
-            <button className="text-sm font-semibold text-slate-700">
-              Log in
-            </button>
-            <button className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800">
-              Sign up
-            </button>
+          <div className="hidden md:flex">
+            <AuthActions />
           </div>
 
           <button className="rounded-lg border border-slate-200 p-2 md:hidden" aria-label="Open menu">
