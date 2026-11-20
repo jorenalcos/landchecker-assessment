@@ -5,6 +5,7 @@ import PropertyDetailsPage from "../features/properties/pages/PropertyDetailsPag
 import LoginPage from "../features/auth/pages/LoginPage";
 import RegisterPage from "../features/auth/pages/RegisterPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import WatchlistPage from "../features/watchlists/pages/WatchlistPage";
 
 export default function AppRoutes() {
   return (
@@ -17,7 +18,7 @@ export default function AppRoutes() {
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
-        {/* Add authenticated pages here as they are created. */}
+        <Route path="/watchlist" element={<WatchlistPage />} />
       </Route>
     </Routes>
   );

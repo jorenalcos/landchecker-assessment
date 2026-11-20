@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { LogOut, UserRound } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
+import { Heart } from "lucide-react";
 
 export default function AuthActions() {
   const navigate = useNavigate();
@@ -47,6 +48,14 @@ export default function AuthActions() {
           {user?.email}
         </span>
       </div>
+
+      <Link
+        to="/watchlist"
+        className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-emerald-700"
+      >
+        <Heart size={17} />
+        Saved properties
+      </Link>
 
       <button
         type="button"

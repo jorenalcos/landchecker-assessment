@@ -3,16 +3,12 @@ import PropertyCard from "./PropertyCard";
 
 interface PropertyGridProps {
   properties: Property[];
-  favorites: number[];
-  onToggleFavorite: (id: number) => void;
   isLoading?: boolean;
   isError?: boolean;
 }
 
 export default function PropertyGrid({
   properties,
-  favorites,
-  onToggleFavorite,
   isLoading = false,
   isError = false,
 }: PropertyGridProps) {
@@ -32,7 +28,7 @@ export default function PropertyGrid({
     );
   }
 
-  if (properties.length === 0 && !isError) {
+  if (properties.length === 0) {
     return (
       <div className="mt-10 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
         <h3 className="font-semibold">No properties found</h3>
@@ -46,12 +42,7 @@ export default function PropertyGrid({
   return (
     <div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {properties.map((property) => (
-        <PropertyCard
-          key={property.id}
-          property={property}
-          isFavorite={favorites.includes(property.id)}
-          onToggleFavorite={onToggleFavorite}
-        />
+        <PropertyCard key={property.id} property={property} />
       ))}
     </div>
   );

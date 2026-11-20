@@ -1,11 +1,10 @@
-import { BedDouble, Bath, MapPin, Heart } from "lucide-react";
+import { BedDouble, Bath, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Property } from "../types/property";
+import WatchlistButton from "../../watchlists/components/WatchlistButton";
 
 interface PropertyCardProps {
   property: Property;
-  isFavorite: boolean;
-  onToggleFavorite: (id: number) => void;
 }
 
 function formatPrice(price: string | number) {
@@ -26,11 +25,7 @@ function getPropertyImage(type: string) {
   return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900";
 }
 
-export default function PropertyCard({
-  property,
-  isFavorite,
-  onToggleFavorite,
-}: PropertyCardProps) {
+export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-slate-100 bg-white transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/5">
       <div className="relative h-52 overflow-hidden">
@@ -44,19 +39,9 @@ export default function PropertyCard({
           {property.status || "For sale"}
         </span>
 
-        <button
-          type="button"
-          onClick={() => onToggleFavorite(property.id)}
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-          aria-pressed={isFavorite}
-          className="absolute right-3 top-3 rounded-full bg-white p-2.5 text-slate-600 shadow-sm transition hover:text-red-500"
-        >
-          <Heart
-            size={18}
-            fill={isFavorite ? "currentColor" : "none"}
-            className={isFavorite ? "text-red-500" : ""}
-          />
-        </button>
+        <div className="absolute right-3 top-3">
+          <WatchlistButton propertyId={property.id} />
+        </div>
       </div>
 
       <div className="p-4">
@@ -93,9 +78,7 @@ export default function PropertyCard({
 
           {property.bedrooms === 0 &&
             (property.bathrooms ?? 0) === 0 && (
-              <span className="capitalize">
-                {property.property_type}
-              </span>
+              <span className="capitalize">{property.property_type}</span>
             )}
         </div>
       </div>
