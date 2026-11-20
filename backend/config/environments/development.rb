@@ -24,7 +24,14 @@ Rails.application.configure do
   end
 
   # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  config.cache_store = :redis_cache_store, {
+    url: ENV.fetch("REDIS_URL", "redis://redis:6379/0"),
+    namespace: "landchecker:cache",
+    expires_in: 5.minutes,
+    connect_timeout: 1,
+    read_timeout: 1,
+    write_timeout: 1
+  }
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
