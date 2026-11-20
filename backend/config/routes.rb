@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get "auth/me", to: "auth#me"
 
       resources :properties, only: %i[index show create update destroy]
+      resources :watchlists, only: [:index, :create, :destroy]
     end
   end
 end
