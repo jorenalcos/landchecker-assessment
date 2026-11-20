@@ -130,6 +130,24 @@ RSpec.describe "API V1 Authentication", type: :request do
 
         run_test!
       end
+
+      response "401", "Expired authentication token" do
+        let(:user) do
+          User.create!(email: email, password: password)
+        end
+
+        let(:token) do
+          JWT.encode(
+            { user_id: user.id, exp: 1 },
+            Rails.application.secret_key_base,
+            JsonWebToken::ALGORITHM
+          )
+        end
+
+        let(:Authorization) { "Bearer #{token}" }
+
+        run_test!
+      end
     end
   end
 end
