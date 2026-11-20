@@ -7,10 +7,46 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
       def index
-        properties = Property.order(created_at: :desc)
+        properties = Property.all
+
+        properties = properties.where(property_type: params[:property_type]) if params[:property_type].present?
+
+        properties = properties.where(status: params[:status]) if params[:status].present?
+
+        properties = properties.where("price >= ?", params[:min_price]) if params[:min_price].present?
+
+        properties = properties.where("price <= ?", params[:max_price]) if params[:max_price].present?
+
+        if params[:search].present?
+          search = "%#{params[:search].strip}%"
+          properties = properties.where(
+            "title ILIKE :search OR address ILIKE :search",
+            search: search
+          )
+        end
+
+        properties = properties.order(created_at: :desc)
+
+        page = [params[:page].to_i, 1].max
+        per_page = params[:per_page].present? ? params[:per_page].to_i : 10
+        per_page = 10 if per_page <= 0
+        per_page = [per_page, 50].min
+
+        total_count = properties.count
+        total_pages = (total_count.to_f / per_page).ceil
+
+        properties = properties
+          .limit(per_page)
+          .offset((page - 1) * per_page)
 
         render json: {
-          properties: properties.map { |property| property_response(property) }
+          properties: properties.map { |property| property_response(property) },
+          meta: {
+            current_page: page,
+            per_page: per_page,
+            total_count: total_count,
+            total_pages: total_pages
+          }
         }, status: :ok
       end
 
