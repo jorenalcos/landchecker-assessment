@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: landchecker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: landchecker
+      POSTGRES_PASSWORD: landchecker_dev_password
+      POSTGRES_DB: landchecker_development
+    ports:
+      - "5434:5432"
+    volumes:
+      - landchecker_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U landchecker -d landchecker_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: landchecker-api
+    command: bash -lc "bundle install && bin/rails server -b 0.0.0.0"
+    volumes:
+      - ./backend:/app
+      - landchecker_bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: "postgres://landchecker:landchecker_dev_password@db:5432/landchecker_development"
+      BUNDLE_PATH: /usr/local/bundle
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  landchecker_postgres_data:
+  landchecker_bundle:
