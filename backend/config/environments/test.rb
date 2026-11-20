@@ -8,8 +8,6 @@ Rails.application.configure do
 
   config.hosts.clear
 
-  config.hosts << "www.example.com"
-
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false
 
