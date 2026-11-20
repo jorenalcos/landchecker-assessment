@@ -54,9 +54,8 @@ export default function WatchlistPage() {
         <PropertyGrid
           properties={savedProperties}
           isLoading={isLoading}
-          isError={isError} favorites={[]} onToggleFavorite={function (id: number): void {
-            throw new Error("Function not implemented.");
-          } }        />
+          isError={isError}
+        />
       </main>
     </div>
   );

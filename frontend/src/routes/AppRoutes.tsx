@@ -6,6 +6,8 @@ import LoginPage from "../features/auth/pages/LoginPage";
 import RegisterPage from "../features/auth/pages/RegisterPage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import WatchlistPage from "../features/watchlists/pages/WatchlistPage";
+import AdminRoute from "../features/admin/components/AdminRoute";
+import AdminDashboardPage from "../features/admin/pages/AdminDashboardPage";
 
 export default function AppRoutes() {
   return (
@@ -20,6 +22,15 @@ export default function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route path="/watchlist" element={<WatchlistPage />} />
       </Route>
+
+      {/* Admin routes */}
+      <Route element={<AdminRoute />}>
+        <Route
+          path="/admin"
+          element={<AdminDashboardPage />}
+        />
+      </Route>
     </Routes>
+
   );
 }

@@ -5,7 +5,6 @@ import {
   Bath,
   Heart,
   House,
-  Maximize,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProperty } from "../hooks/useProperty";

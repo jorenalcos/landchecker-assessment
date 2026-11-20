@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Search,
   MapPin,
-  BedDouble,
-  Bath,
-  Heart,
   SlidersHorizontal,
   ArrowRight,
   Menu,
@@ -28,24 +24,6 @@ const categories = [
   { name: "Commercial", icon: Building },
 ];
 
-function formatPrice(price: number) {
-  return `₱${price.toLocaleString("en-PH")}`;
-}
-
-function getPropertyImage(type: string) {
-  const normalized = type.toLowerCase();
-
-  if (normalized.includes("land")) {
-    return "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900";
-  }
-
-  if (normalized.includes("condo")) {
-    return "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900";
-  }
-
-  return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900";
-}
-
 function mapPropertyType(type: string) {
   const normalized = type.toLowerCase();
 
@@ -67,7 +45,6 @@ function mapPropertyType(type: string) {
 export default function MarketplacePage() {
   const [activeCategory, setActiveCategory] = useState("All properties");
   const [search, setSearch] = useState("");
-  const [favorites, setFavorites] = useState<number[]>([]);
 
   const { data, isLoading, isError } = useProperties({
     page: 1,
@@ -89,14 +66,6 @@ export default function MarketplacePage() {
 
     return matchesCategory && matchesSearch;
   });
-
-  function toggleFavorite(id: number) {
-    setFavorites((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -279,8 +248,6 @@ export default function MarketplacePage() {
 
             <PropertyGrid
               properties={filteredProperties}
-              favorites={favorites}
-              onToggleFavorite={toggleFavorite}
               isLoading={isLoading}
               isError={isError}
             />
