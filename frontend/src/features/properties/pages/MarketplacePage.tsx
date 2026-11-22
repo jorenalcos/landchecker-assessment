@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { useProperties } from "../hooks/useProperties";
-import type { Property } from "../types/property";
 import PropertyGrid from "../components/PropertyGrid";
 import AuthActions from "../../auth/components/AuthActions";
 
@@ -24,48 +23,89 @@ const categories = [
   { name: "Commercial", icon: Building },
 ];
 
-function mapPropertyType(type: string) {
-  const normalized = type.toLowerCase();
-
-  if (normalized.includes("land") || normalized.includes("lot")) {
-    return "Land";
-  }
-
-  if (normalized.includes("condo")) {
-    return "Condominiums";
-  }
-
-  if (normalized.includes("commercial")) {
-    return "Commercial";
-  }
-
-  return "Houses";
-}
-
 export default function MarketplacePage() {
   const [activeCategory, setActiveCategory] = useState("All properties");
   const [search, setSearch] = useState("");
 
-  const { data, isLoading, isError } = useProperties({
-    page: 1,
-    per_page: 10,
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [filterDraft, setFilterDraft] = useState({
+    min_price: "",
+    max_price: "",
+    min_bedrooms: "",
+    max_bedrooms: "",
   });
 
+  const [appliedFilters, setAppliedFilters] = useState<{
+    min_price?: number;
+    max_price?: number;
+    min_bedrooms?: number;
+    max_bedrooms?: number;
+  }>({});
+
+  const propertyTypeMap: Record<string, string | undefined> = {
+    "All properties": undefined,
+    Houses: "House",
+    Land: "Land",
+    Condominiums: "Condominium",
+    Commercial: "Commercial",
+  };
+
+  const { data, isLoading, isError } = useProperties({
+    page: currentPage,
+    per_page: 6,
+    search: search.trim() || undefined,
+    property_type: propertyTypeMap[activeCategory],
+    ...appliedFilters,
+  });
 
   const properties = data?.properties ?? [];
 
-  const filteredProperties = properties.filter((property: Property) => {
-    const matchesCategory =
-      activeCategory === "All properties" ||
-      mapPropertyType(property.property_type) === activeCategory;
+  function applyFilters() {
+    const minPrice = filterDraft.min_price.trim();
+    const maxPrice = filterDraft.max_price.trim();
+    const minBedrooms = filterDraft.min_bedrooms.trim();
+    const maxBedrooms = filterDraft.max_bedrooms.trim();
 
-    const matchesSearch =
-      `${property.title} ${property.address}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
+    const minPriceValue = minPrice ? Number(minPrice) : undefined;
+    const maxPriceValue = maxPrice ? Number(maxPrice) : undefined;
+    const minBedroomsValue = minBedrooms ? Number(minBedrooms) : undefined;
+    const maxBedroomsValue = maxBedrooms ? Number(maxBedrooms) : undefined;
 
-    return matchesCategory && matchesSearch;
-  });
+    if (
+      (minPriceValue !== undefined &&
+        maxPriceValue !== undefined &&
+        minPriceValue > maxPriceValue) ||
+      (minBedroomsValue !== undefined &&
+        maxBedroomsValue !== undefined &&
+        minBedroomsValue > maxBedroomsValue)
+    ) {
+      alert("Minimum values cannot be greater than maximum values.");
+      return;
+    }
+
+    setAppliedFilters({
+      min_price: minPriceValue,
+      max_price: maxPriceValue,
+      min_bedrooms: minBedroomsValue,
+      max_bedrooms: maxBedroomsValue,
+    });
+
+    setIsFilterOpen(false);
+  }
+
+  function clearFilters() {
+    setFilterDraft({
+      min_price: "",
+      max_price: "",
+      min_bedrooms: "",
+      max_bedrooms: "",
+    });
+
+    setAppliedFilters({});
+  }
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -125,7 +165,10 @@ export default function MarketplacePage() {
                     <MapPin className="shrink-0 text-emerald-700" size={21} />
                     <input
                       value={search}
-                      onChange={(event) => setSearch(event.target.value)}
+                      onChange={(event) => {
+                        setSearch(event.target.value);
+                        setCurrentPage(1);
+                      }}
                       placeholder="Search by location or keyword"
                       className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-slate-400"
                     />
@@ -186,6 +229,8 @@ export default function MarketplacePage() {
                   key={category.name}
                   onClick={() => {
                     setActiveCategory(category.name);
+                    setCurrentPage(1);
+
                     document.getElementById("properties")?.scrollIntoView({
                       behavior: "smooth",
                     });
@@ -229,7 +274,10 @@ export default function MarketplacePage() {
                 {categories.slice(0, 3).map((category) => (
                   <button
                     key={category.name}
-                    onClick={() => setActiveCategory(category.name)}
+                    onClick={() => {
+                      setActiveCategory(category.name);
+                      setCurrentPage(1);
+                    }}
                     className={`rounded-full px-4 py-2 text-xs font-semibold transition ${activeCategory === category.name
                       ? "bg-emerald-700 text-white"
                       : "border border-slate-200 bg-white text-slate-600 hover:border-emerald-500"
@@ -240,17 +288,176 @@ export default function MarketplacePage() {
                 ))}
               </div>
 
-              <button className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700">
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Filters button clicked");
+                  setIsFilterOpen((current) => !current);
+                }}
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:border-emerald-500"
+              >
                 <SlidersHorizontal size={16} />
                 Filters
               </button>
+              {isFilterOpen && (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="mb-5 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-slate-900">Filter properties</h3>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Narrow your search to find the right property.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="text-xs font-semibold text-slate-500 hover:text-red-600"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {/* Price range */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Minimum price (PHP)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="e.g. 500000"
+                        value={filterDraft.min_price}
+                        onChange={(event) =>
+                          setFilterDraft((current) => ({
+                            ...current,
+                            min_price: event.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Maximum price (PHP)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="e.g. 5000000"
+                        value={filterDraft.max_price}
+                        onChange={(event) =>
+                          setFilterDraft((current) => ({
+                            ...current,
+                            max_price: event.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+
+                    {/* Bedrooms */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Minimum bedrooms
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Any"
+                        value={filterDraft.min_bedrooms}
+                        onChange={(event) =>
+                          setFilterDraft((current) => ({
+                            ...current,
+                            min_bedrooms: event.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-700">
+                        Maximum bedrooms
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Any"
+                        value={filterDraft.max_bedrooms}
+                        onChange={(event) =>
+                          setFilterDraft((current) => ({
+                            ...current,
+                            max_bedrooms: event.target.value,
+                          }))
+                        }
+                        className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setIsFilterOpen(false)}
+                      className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={applyFilters}
+                      className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                    >
+                      Apply Filters
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <PropertyGrid
-              properties={filteredProperties}
+              properties={properties}
               isLoading={isLoading}
               isError={isError}
             />
+
+            {data && data.meta.total_pages > 1 && (
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  disabled={currentPage === 1}
+                  onClick={() => {
+                    setCurrentPage((page) => Math.max(1, page - 1));
+                  }}
+                  className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-600 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Previous
+                </button>
+
+                <span className="text-sm font-medium text-slate-600">
+                  Page {data.meta.current_page} of {data.meta.total_pages}
+                </span>
+
+                <button
+                  type="button"
+                  disabled={currentPage >= data.meta.total_pages}
+                  onClick={() => {
+                    setCurrentPage((page) =>
+                      Math.min(data.meta.total_pages, page + 1)
+                    );
+                  }}
+                  className="rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

@@ -35,6 +35,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     container_name: landchecker-api
+    env_file:
+      - ./backend/.env
     command: bash -lc "bundle install && bin/rails server -b 0.0.0.0"
     volumes:
       - ./backend:/app

@@ -8,6 +8,8 @@ import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import WatchlistPage from "../features/watchlists/pages/WatchlistPage";
 import AdminRoute from "../features/admin/components/AdminRoute";
 import AdminDashboardPage from "../features/admin/pages/AdminDashboardPage";
+import AdminLayout from "../features/admin/components/AdminLayout";
+import AdminPropertiesPage from "../features/admin/pages/AdminPropertiesPage";
 
 export default function AppRoutes() {
   return (
@@ -25,10 +27,16 @@ export default function AppRoutes() {
 
       {/* Admin routes */}
       <Route element={<AdminRoute />}>
-        <Route
-          path="/admin"
-          element={<AdminDashboardPage />}
-        />
+        <Route element={<AdminLayout />}>
+          <Route
+            path="/admin"
+            element={<AdminDashboardPage />}
+          />
+          <Route
+            path="/admin/properties"
+            element={<AdminPropertiesPage />}
+          />
+        </Route>
       </Route>
     </Routes>
 

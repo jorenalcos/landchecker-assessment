@@ -1,4 +1,4 @@
-
+require "securerandom"
 module Api
   module V1
     class PropertiesController < ApplicationController
@@ -22,6 +22,8 @@ module Api
           status: params[:status],
           min_price: params[:min_price],
           max_price: params[:max_price],
+          min_bedrooms: params[:min_bedrooms],
+          max_bedrooms: params[:max_bedrooms],
           search: params[:search]&.strip,
           page: page,
           per_page: per_page
@@ -144,6 +146,18 @@ module Api
           properties = properties.where("price <= ?", filters[:max_price])
         end
 
+        if filters[:min_bedrooms].present?
+          properties = properties.where(
+            "bedrooms >= ?", filters[:min_bedrooms]
+          )
+        end
+
+        if filters[:max_bedrooms].present?
+          properties = properties.where(
+            "bedrooms <= ?", filters[:max_bedrooms]
+          )
+        end
+
         if filters[:search].present?
           search = "%#{filters[:search]}%"
 
@@ -157,10 +171,9 @@ module Api
       end
 
       def invalidate_property_cache!
-        Rails.cache.increment(
+        Rails.cache.write(
           PROPERTY_CACHE_VERSION_KEY,
-          1,
-          initial: 0
+          SecureRandom.uuid
         )
       end
 
