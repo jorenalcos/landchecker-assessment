@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Building2,
   LayoutDashboard,
@@ -46,7 +47,12 @@ export default function AdminLayout() {
             <Building2 size={22} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">LandChecker</h1>
+            <Link to="/" className="flex items-center gap-3">
+              {/* Keep your existing logo icon */}
+              <span className="font-bold">
+                LandChecker
+              </span>
+            </Link>
             <p className="text-xs text-slate-400">Administration</p>
           </div>
         </div>
@@ -77,10 +83,9 @@ export default function AdminLayout() {
                   end
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `mb-1 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${
-                      isActive
-                        ? "bg-emerald-600 text-white"
-                        : "text-slate-400 hover:bg-white/5 hover:text-white"
+                    `mb-1 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${isActive
+                      ? "bg-emerald-600 text-white"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white"
                     }`
                   }
                 >
@@ -100,9 +105,10 @@ export default function AdminLayout() {
 
           <div className="space-y-1">
             <div className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-500">
-              <Building2 size={19} />
-              Properties
-              <span className="ml-auto text-[10px]">SOON</span>
+              <Link to="/admin/properties" className="flex items-center gap-3">
+                <Building2 size={19} />
+                Properties
+              </Link>
             </div>
 
             <div className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-slate-500">
