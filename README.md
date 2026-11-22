@@ -375,6 +375,128 @@ The administrator account should have access to the admin dashboard and property
 
 ---
 
+## Admin Panel Management Guide
+
+LandChecker provides an administrative panel for managing property listings. Only authenticated users with the `admin` role can access administrative features.
+
+### 1. Access the Admin Panel
+
+1. Start the LandChecker application.
+2. Open the frontend in your browser:
+   `http://localhost:5173`
+3. Log in using the administrator account configured through the database seeder.
+4. After successful authentication, the administrator is redirected to the Admin Dashboard.
+
+**Admin Panel URL:**
+
+```text
+http://localhost:5173/admin
+```
+
+### 2. Admin Dashboard
+
+The dashboard serves as the main navigation area for administrators.
+
+Available navigation:
+
+| Navigation | Description |
+|---|---|
+| LandChecker Logo | Returns to the public marketplace |
+| Dashboard | Opens the admin dashboard |
+| Properties | Opens property management |
+| Logout | Ends the administrator session |
+
+### 3. Manage Property Listings
+
+Navigate to:
+
+```text
+http://localhost:5173/admin/properties
+```
+
+The Properties Management page allows administrators to manage existing property listings.
+
+Available operations:
+
+- View property listings.
+- Create new property listings.
+- Edit existing property information.
+- Delete property listings.
+
+### 4. Create a Property
+
+To add a new property:
+
+1. Open the Admin Panel.
+2. Navigate to **Properties**.
+3. Select the **Add Property** or **Create Property** action.
+4. Complete the property form.
+5. Submit the form to save the listing.
+
+Property information includes:
+
+| Field | Description |
+|---|---|
+| Title | Property listing title |
+| Description | Property details and overview |
+| Price | Property selling price |
+| Bedrooms | Number of bedrooms |
+| Bathrooms | Number of bathrooms |
+| Property Type | House, Land, Condominium, or Commercial |
+| Address | Property location |
+| Status | Property availability status |
+
+After successful creation, the property listing is saved and becomes available through the marketplace according to its configured status and listing behavior.
+
+### 5. Edit a Property
+
+To update an existing listing:
+
+1. Navigate to **Admin → Properties**.
+2. Locate the property you want to update.
+3. Select the **Edit** action.
+4. Modify the necessary property information.
+5. Save your changes.
+
+The updated property information is persisted in the database and reflected in the marketplace.
+
+### 6. Delete a Property
+
+To remove a property listing:
+
+1. Navigate to **Admin → Properties**.
+2. Locate the property you want to remove.
+3. Select the **Delete** action.
+4. Confirm the deletion when prompted.
+
+**Important:** Deleted property listings are removed according to the application's current deletion implementation. Verify that the correct listing is selected before confirming.
+
+### 7. Administrator Access and Security
+
+The admin panel is protected through authentication and role-based access control.
+
+Security behavior:
+
+- Only authenticated users can access protected routes.
+- Only users with the `admin` role can access administrative routes.
+- Regular users cannot create, update, or delete property listings.
+- Backend authorization protects administrative API operations.
+- Administrators can log out to end their authenticated session.
+
+### 8. Return to the Public Marketplace
+
+Administrators can return to the public marketplace by clicking the LandChecker logo in the admin navigation.
+
+Marketplace URL:
+
+```text
+http://localhost:5173/
+```
+
+---
+
+**Administration Note:** Keep administrator credentials secure. Do not share admin login details or expose them in public documentation.
+
 ## Running the Application
 
 ### Start all Docker services
