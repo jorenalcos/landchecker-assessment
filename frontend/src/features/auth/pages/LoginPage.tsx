@@ -20,7 +20,11 @@ export default function LoginPage() {
     mutationFn: login,
     onSuccess: (data) => {
       setAuth(data.user, data.token);
-      navigate("/", { replace: true });
+      if (data.user.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     },
     onError: (err: AxiosError<{ error?: string; message?: string }>) => {
       setError(
